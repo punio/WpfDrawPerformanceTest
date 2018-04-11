@@ -1,0 +1,34 @@
+﻿<Window x:Class="WpfDrawPerformanceTest.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:WpfDrawPerformanceTest"
+        xmlns:sys="clr-namespace:System;assembly=mscorlib"
+        mc:Ignorable="d"
+        Title="MainWindow" Height="450" Width="800" Background="Black">
+    <Window.Resources>
+        <ObjectDataProvider x:Key="DrawTypeEnum" MethodName="GetValues" ObjectType="{x:Type sys:Enum}">
+            <ObjectDataProvider.MethodParameters>
+                <x:Type TypeName="local:DrawType"/>
+            </ObjectDataProvider.MethodParameters>
+        </ObjectDataProvider>
+    </Window.Resources>
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+        </Grid.RowDefinitions>
+        <Grid>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="50"/>
+                <ColumnDefinition Width="Auto"/>
+            </Grid.ColumnDefinitions>
+            <ComboBox ItemsSource="{Binding Source={StaticResource DrawTypeEnum}}" SelectedItem="{Binding DrawType,ElementName=DrawControl}"/>
+            <TextBlock Grid.Column="1" Text="{Binding Fps,ElementName=DrawControl,StringFormat=f1}" Foreground="White" HorizontalAlignment="Right"/>
+            <TextBlock Grid.Column="2" Text=" fps" Foreground="White"/>
+        </Grid>
+        <local:CustomDrawControl x:Name="DrawControl" Grid.Row="1"/>
+    </Grid>
+</Window>
