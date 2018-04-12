@@ -6,7 +6,7 @@
         xmlns:local="clr-namespace:WpfDrawPerformanceTest"
         xmlns:sys="clr-namespace:System;assembly=mscorlib"
         mc:Ignorable="d"
-        Title="MainWindow" Height="450" Width="800" Background="Black">
+        Title="MainWindow" Height="400" Width="400" Background="Black">
     <Window.Resources>
         <ObjectDataProvider x:Key="DrawTypeEnum" MethodName="GetValues" ObjectType="{x:Type sys:Enum}">
             <ObjectDataProvider.MethodParameters>
@@ -19,16 +19,11 @@
             <RowDefinition Height="Auto"/>
             <RowDefinition Height="*"/>
         </Grid.RowDefinitions>
-        <Grid>
-            <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="*"/>
-                <ColumnDefinition Width="50"/>
-                <ColumnDefinition Width="Auto"/>
-            </Grid.ColumnDefinitions>
-            <ComboBox ItemsSource="{Binding Source={StaticResource DrawTypeEnum}}" SelectedItem="{Binding DrawType,ElementName=DrawControl}"/>
-            <TextBlock Grid.Column="1" Text="{Binding Fps,ElementName=DrawControl,StringFormat=f1}" Foreground="White" HorizontalAlignment="Right"/>
-            <TextBlock Grid.Column="2" Text=" fps" Foreground="White"/>
-        </Grid>
+        <ComboBox ItemsSource="{Binding Source={StaticResource DrawTypeEnum}}" SelectedItem="{Binding DrawType,ElementName=DrawControl}"/>
+        <StackPanel Orientation="Horizontal" Grid.Row="1" VerticalAlignment="Center" HorizontalAlignment="Center">
+            <TextBlock Text="{Binding Fps,ElementName=DrawControl,StringFormat=f1}" FontSize="48" Foreground="White" HorizontalAlignment="Right"/>
+            <TextBlock Text=" fps" FontSize="32" Foreground="White" VerticalAlignment="Bottom"/>
+        </StackPanel>
         <local:CustomDrawControl x:Name="DrawControl" Grid.Row="1"/>
     </Grid>
 </Window>

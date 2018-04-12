@@ -90,7 +90,6 @@ namespace WpfDrawPerformanceTest
 				break;
 			}
 
-
 			_counter++;
 			Task.Run(async () =>
 			{
@@ -187,9 +186,6 @@ namespace WpfDrawPerformanceTest
 				p.X2 = p.X1 + (_random.NextDouble() - .5) * 2;
 				p.Y2 = p.Y1 + (_random.NextDouble() - .5) * 2;
 				p.Pallete = (counter++) % penList.Length;
-				drawingContext.DrawLine(penList[p.Pallete], new Point(p.X1, p.Y1), new Point(p.X2, p.Y2));
-				p.X1 = p.X2;
-				p.Y1 = p.Y2;
 				p.Age++;
 			}
 
