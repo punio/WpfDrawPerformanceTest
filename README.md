@@ -45,12 +45,15 @@ Drawing in the DrawingGroup and drawing it in DrawingContext.DrawDrawing collect
 
 # Result
 
+(CPU : Core i7-6700 , GPU : GeForce GTX 1070)
+
 | DrawType | FPS(roughly) |
 ---- | ----
 | NotFreeze | very slow |
 | Freeze | 50 fps |
 | Grouping | 60 fps |
 | BackingStore | 10 fps |
+
 
 
 
