@@ -47,6 +47,7 @@ Drawing in the DrawingGroup and drawing it in DrawingContext.DrawDrawing collect
 
 | DrawType | FPS(roughly) |
 ---- | ----
+| NotFreeze | very slow |
 | Freeze | 50 fps |
 | Grouping | 60 fps |
 | BackingStore | 10 fps |
