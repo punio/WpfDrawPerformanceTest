@@ -66,7 +66,7 @@ namespace WpfDrawPerformanceTest
 
 		private uint _counter = 0;
 		private uint _previousCounter = 0;
-		const int ParticalCount = 50000;
+		const int ParticalCount = 10000;
 		const int MaxAge = 100;
 		private readonly Particle[] _particles;
 		private readonly Random _random = new Random();

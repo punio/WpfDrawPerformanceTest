@@ -43,16 +43,23 @@ Particle's drawing is done by DrawingContext.DrawGeometry in palette unit.
 
 Drawing in the DrawingGroup and drawing it in DrawingContext.DrawDrawing collectively.
 
+### WriteableBitmap
+
+Using WriteableBitmap (Since it is troublesome to manipulate WriteableBitmap directly, I use WriteableBitmapEx).
+
+
 # Result
 
-(CPU : Core i7-6700 , GPU : GeForce GTX 1070)
+CPU : Core i7-6700 , GPU : GeForce GTX 1070  
+(I do not know if the measurement method is fair)
 
-| DrawType | FPS(roughly) |
----- | ----
-| NotFreeze | very slow |
-| Freeze | 50 fps |
-| Grouping | 60 fps |
-| BackingStore | 10 fps |
+| DrawType | 10000 particles FPS(roughly) | 50000 |
+---- | ---- | ----
+| NotFreeze | very slow | |
+| Freeze | 50 fps | 10 fps |
+| Grouping | 90 fps | 20 fps |
+| BackingStore | 10 fps | very slow |
+| WriteableBitmap | 120 fps | 95 fps |
 
 
 
