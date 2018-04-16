@@ -7,18 +7,21 @@ using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
+using System.Windows.Controls;
 using System.Windows.Media;
+using System.Windows.Media.Imaging;
 using System.Windows.Threading;
 
 namespace WpfDrawPerformanceTest
 {
-	class CustomDrawControl : FrameworkElement
+	class CustomDrawControl : ContentControl
 	{
 		public DrawType DrawType
 		{
 			get => (DrawType)GetValue(DrawTypeProperty);
 			set => SetValue(DrawTypeProperty, value);
 		}
+
 		public static readonly DependencyProperty DrawTypeProperty = DependencyProperty.Register("DrawType", typeof(DrawType), typeof(CustomDrawControl), new PropertyMetadata(WpfDrawPerformanceTest.DrawType.None));
 
 
@@ -28,6 +31,7 @@ namespace WpfDrawPerformanceTest
 			get => (double)GetValue(FpsProperty);
 			set => SetValue(FpsProperty, value);
 		}
+
 		// Using a DependencyProperty as the backing store for Fps.  This enables animation, styling, binding, etc...
 		public static readonly DependencyProperty FpsProperty = DependencyProperty.Register("Fps", typeof(double), typeof(CustomDrawControl), new PropertyMetadata(0.0));
 
@@ -43,23 +47,26 @@ namespace WpfDrawPerformanceTest
 				p.Age = _random.Next(MaxAge);
 				list.Add(p);
 			}
+
 			_particles = list.ToArray();
 
 			_frameRateCalculateTimer = new Timer(CalculateFrameRate);
 			_frameRateStopwatch.Start();
 			_frameRateCalculateTimer.Change(1000, 1000);
 
-			CompositionTarget.Rendering += CompositionTarget_Rendering			;
+			CompositionTarget.Rendering += CompositionTarget_Rendering;
+			this.SizeChanged += (o, e) => this.InitWriteableBitmap();
 		}
 
 		private void CompositionTarget_Rendering(object sender, EventArgs e)
 		{
 			_counter++;
+			if (DrawType == DrawType.WriteableBitmap) WriteableBitmapRender();
 		}
 
 		private uint _counter = 0;
 		private uint _previousCounter = 0;
-		const int ParticalCount = 10000;
+		const int ParticalCount = 50000;
 		const int MaxAge = 100;
 		private readonly Particle[] _particles;
 		private readonly Random _random = new Random();
@@ -83,7 +90,7 @@ namespace WpfDrawPerformanceTest
 			switch (DrawType)
 			{
 			case DrawType.NotFreeze:
-				if (ParticalCount > 3000) break;    // It's very slow
+				if (ParticalCount > 3000) break; // It's very slow
 				NotFreezeRender(drawingContext);
 				break;
 			case DrawType.Freeze:
@@ -114,6 +121,7 @@ namespace WpfDrawPerformanceTest
 			{
 				colorList.Add(GetColor((_counter + i * 8) % 360));
 			}
+
 			var penList = colorList.Select(c => new Pen(new SolidColorBrush(c), 2)).ToArray();
 			#endregion
 
@@ -141,6 +149,7 @@ namespace WpfDrawPerformanceTest
 			{
 				colorList.Add(GetColor((_counter + i * 8) % 360));
 			}
+
 			var penList = colorList.Select(c =>
 			{
 				var brush = new SolidColorBrush(c);
@@ -175,6 +184,7 @@ namespace WpfDrawPerformanceTest
 			{
 				colorList.Add(GetColor((_counter + i * 8) % 360));
 			}
+
 			var penList = colorList.Select(c =>
 			{
 				var brush = new SolidColorBrush(c);
@@ -208,6 +218,7 @@ namespace WpfDrawPerformanceTest
 						p.Y1 = p.Y2;
 					}
 				}
+
 				drawingContext.DrawGeometry(null, penList[g.Key], geometry);
 			}
 		}
@@ -223,6 +234,7 @@ namespace WpfDrawPerformanceTest
 			{
 				colorList.Add(GetColor((_counter + i * 8) % 360));
 			}
+
 			var penList = colorList.Select(c =>
 			{
 				var brush = new SolidColorBrush(c);
@@ -252,6 +264,62 @@ namespace WpfDrawPerformanceTest
 			drawingContext.DrawDrawing(_backingStore);
 		}
 		#endregion
+
+		#region DrawType.WriteableBitmap
+		Image image;
+		WriteableBitmap writeableBitmap;
+		private void InitWriteableBitmap()
+		{
+			writeableBitmap = BitmapFactory.New((int)this.ActualWidth, (int)this.ActualHeight);
+			if (image == null)
+			{
+				image = new Image();
+				this.Content = image;
+			}
+			image.Source = writeableBitmap;
+		}
+		private int Color2Int(Color color)
+		{
+			return (int)((color.A << 24) | (color.R << 16) | (color.G << 8) | color.B);
+		}
+
+		private void WriteableBitmapRender()
+		{
+			#region Create Palette with Freeze
+			var colorList = new List<Color>();
+			for (var i = 0; i < 8; i++)
+			{
+				colorList.Add(GetColor((_counter + i * 8) % 360));
+			}
+			var penList = colorList.Select(c =>
+			{
+				var brush = new SolidColorBrush(c);
+				if (brush.CanFreeze) brush.Freeze();
+				var pen = new Pen(brush, 2);
+				if (pen.CanFreeze) pen.Freeze();
+				return pen;
+			}).ToArray();
+			#endregion
+
+			writeableBitmap.Clear();
+			using (var bitmapContext = writeableBitmap.GetBitmapContext())
+			{
+				var counter = 0;
+				foreach (var p in _particles)
+				{
+					if (p.Age > MaxAge) p.Init(_random, this.ActualWidth, this.ActualHeight);
+					p.X2 = p.X1 + (_random.NextDouble() - .5) * 2;
+					p.Y2 = p.Y1 + (_random.NextDouble() - .5) * 2;
+					p.Pallete = (counter++) % penList.Length;
+					WriteableBitmapExtensions.DrawLine(bitmapContext, (int)this.ActualWidth, (int)this.ActualHeight, (int)p.X1, (int)p.Y1, (int)p.X2, (int)p.Y2, Color2Int(colorList[p.Pallete]));
+					p.X1 = p.X2;
+					p.Y1 = p.Y2;
+					p.Age++;
+				}
+			}
+		}
+		#endregion
+
 
 
 

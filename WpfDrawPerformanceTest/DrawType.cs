@@ -8,6 +8,6 @@ namespace WpfDrawPerformanceTest
 {
 	public enum DrawType
 	{
-		None, NotFreeze, Freeze, Grouping, BackingStore
+		None, NotFreeze, Freeze, Grouping, BackingStore, WriteableBitmap
 	}
 }
