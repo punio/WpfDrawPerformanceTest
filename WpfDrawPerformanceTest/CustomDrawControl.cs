@@ -48,6 +48,13 @@ namespace WpfDrawPerformanceTest
 			_frameRateCalculateTimer = new Timer(CalculateFrameRate);
 			_frameRateStopwatch.Start();
 			_frameRateCalculateTimer.Change(1000, 1000);
+
+			CompositionTarget.Rendering += CompositionTarget_Rendering			;
+		}
+
+		private void CompositionTarget_Rendering(object sender, EventArgs e)
+		{
+			_counter++;
 		}
 
 		private uint _counter = 0;
@@ -90,7 +97,6 @@ namespace WpfDrawPerformanceTest
 				break;
 			}
 
-			_counter++;
 			Task.Run(async () =>
 			{
 				await Task.Delay(1);
