@@ -270,7 +270,8 @@ namespace WpfDrawPerformanceTest
 		WriteableBitmap writeableBitmap;
 		private void InitWriteableBitmap()
 		{
-			writeableBitmap = BitmapFactory.New((int)this.ActualWidth, (int)this.ActualHeight);
+			var scale = VisualTreeHelper.GetDpi(this);
+			writeableBitmap = new WriteableBitmap((int)(this.ActualWidth * scale.DpiScaleX), (int)(this.ActualHeight * scale.DpiScaleY), scale.PixelsPerInchX, scale.PixelsPerInchY, PixelFormats.Pbgra32, null);
 			if (image == null)
 			{
 				image = new Image();
@@ -301,17 +302,17 @@ namespace WpfDrawPerformanceTest
 			}).ToArray();
 			#endregion
 
-			writeableBitmap.Clear();
+			writeableBitmap.Clear(Colors.Transparent);
 			using (var bitmapContext = writeableBitmap.GetBitmapContext())
 			{
 				var counter = 0;
 				foreach (var p in _particles)
 				{
-					if (p.Age > MaxAge) p.Init(_random, this.ActualWidth, this.ActualHeight);
+					if (p.Age > MaxAge) p.Init(_random, bitmapContext.Width, bitmapContext.Height);
 					p.X2 = p.X1 + (_random.NextDouble() - .5) * 2;
 					p.Y2 = p.Y1 + (_random.NextDouble() - .5) * 2;
 					p.Pallete = (counter++) % penList.Length;
-					WriteableBitmapExtensions.DrawLine(bitmapContext, (int)this.ActualWidth, (int)this.ActualHeight, (int)p.X1, (int)p.Y1, (int)p.X2, (int)p.Y2, Color2Int(colorList[p.Pallete]));
+					WriteableBitmapExtensions.DrawLineAa(bitmapContext, bitmapContext.Width, bitmapContext.Height, (int)p.X1, (int)p.Y1, (int)p.X2, (int)p.Y2, Color2Int(colorList[p.Pallete]));
 					p.X1 = p.X2;
 					p.Y1 = p.Y2;
 					p.Age++;
