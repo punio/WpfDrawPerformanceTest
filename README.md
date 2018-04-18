@@ -47,6 +47,9 @@ Drawing in the DrawingGroup and drawing it in DrawingContext.DrawDrawing collect
 
 Using WriteableBitmap (Since it is troublesome to manipulate WriteableBitmap directly, I use WriteableBitmapEx).
 
+### Direct2D
+
+Drawing with Direct2D using SharpDX and D2dControl.
 
 # Result
 
@@ -57,11 +60,14 @@ CPU : Core i7-6700 , GPU : GeForce GTX 1070
 ---- | ---- | ----
 | NotFreeze | very slow | |
 | Freeze | 50 fps | 10 fps |
-| Grouping | 90 fps | 20 fps |
+| Grouping | 90 fps | 16 fps |
 | BackingStore | 10 fps | very slow |
-| WriteableBitmap | 120 fps | 95 fps |
+| WriteableBitmap | 120 fps | 60 fps |
+| Direct2D | - | 20 fps |
 
 
+Using WriteableBitmap is the fastest.  
+But WriteableBitmap(Ex) has poor functions.(the coordinate system is not floating point)
 
 
 Please tell me a nice idea :)
